@@ -6,7 +6,7 @@
 
 This contains everything you need to run your app locally.
 
-View your app in AI Studio: https://untitled-232212368031.asia-southeast1.run.app
+View your app in browser: https://untitled-232212368031.asia-southeast1.run.app
 
 ## Run Locally
 
