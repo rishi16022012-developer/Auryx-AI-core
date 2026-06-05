@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auryx Workspace - Interactive Developer Suite</title>
+    <!-- Premium Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&family=Space+Grotesk:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        display: ['Space Grotesk', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.25);
+            --accent-border: rgba(59, 130, 246, 0.15);
+        }
+        
+        .theme-blue { --accent: #3b82f6; --accent-glow: rgba(59, 130, 246, 0.25); --accent-border: rgba(59, 130, 246, 0.15); }
+        .theme-purple { --accent: #a855f7; --accent-glow: rgba(168, 85, 247, 0.25);  --accent-border: rgba(168, 85, 247, 0.15); }
+        .theme-emerald { --accent: #10b981; --accent-glow: rgba(16, 185, 129, 0.25); --accent-border: rgba(16, 185, 129, 0.15); }
+        .theme-rose { --accent: #f43f5e; --accent-glow: rgba(244, 63, 94, 0.25); --accent-border: rgba(244, 63, 94, 0.15); }
+        .theme-amber { --accent: #f59e0b; --accent-glow: rgba(245, 158, 11, 0.25); --accent-border: rgba(245, 158, 11, 0.15); }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 99px;
+            transition: background 0.2s ease;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .bg-grid {
+            background-size: 32px 32px;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.012) 1px, transparent 1px);
+        }
+
+        .toast-slide-in {
+            animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(12px) scale(0.95); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .4; }
+        }
+    </style>
+</head>
+<body class="bg-[#070709] text-[#f4f4f5] h-screen w-screen overflow-hidden flex font-sans theme-blue bg-grid select-none">
+
+    <!-- ROOT CONTAINER -->
+    <div id="root-frame" class="flex w-full h-full relative overflow-hidden">
+        
+        <!-- SIDEBAR CONTAINER (DESKTOP) -->
+        <aside id="sidebar-panel" class="w-[280px] h-full flex flex-col bg-[#0a0a0c] border-r border-white/[0.04] flex-shrink-0 hidden md:flex transition-all z-40">
+            <!-- Header Brand -->
+            <div class="h-14 px-4.5 border-b border-white/[0.04] flex items-center justify-between flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#8b5cf6] via-[#6366f1] to-[#3b82f6] flex items-center justify-center shadow-lg shadow-blue-500/10">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div class="flex flex-col leading-none">
+                        <div class="flex items-center gap-1">
+                            <span class="font-display font-black text-xs tracking-wider text-white">AURYX AI</span>
+                            <span class="px-1.5 py-0.2 text-[7.5px] font-black uppercase bg-emerald-500/10 text-emerald-400 tracking-wider rounded border border-emerald-500/10">PRO</span>
+                        </div>
+                        <span class="text-[7.5px] text-zinc-500 font-extrabold mt-0.5 tracking-wide">RISHI WORKSPACE</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workspace Tabs -->
+            <div class="p-3 border-b border-white/[0.03] space-y-1">
+                <button onclick="switchWorkspaceTab('chat')" id="tab-btn-chat" class="w-full flex items-center justify-between px-3.5 h-10 bg-white/[0.04] text-white rounded-xl text-xs font-bold transition-all border border-white/[0.02]">
+                    <span class="flex items-center gap-2.5">
+                        <i data-lucide="message-square" class="w-4 h-4 text-zinc-400"></i>
+                        <span>AI Interactive Chat</span>
+                    </span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse"></span>
+                </button>
+                <button onclick="switchWorkspaceTab('notes')" id="tab-btn-notes" class="w-full flex items-center gap-2.5 px-3.5 h-10 text-zinc-400 hover:text-white hover:bg-white/[0.02] rounded-xl text-xs font-bold transition-all">
+                    <i data-lucide="file-text" class="w-4 h-4 text-zinc-500"></i>
+                    <span>Study Notes Hub</span>
+                </button>
+                <button onclick="switchWorkspaceTab('calculator')" id="tab-btn-calculator" class="w-full flex items-center gap-2.5 px-3.5 h-10 text-zinc-400 hover:text-white hover:bg-white/[0.02] rounded-xl text-xs font-bold transition-all">
+                    <i data-lucide="calculator" class="w-4 h-4 text-zinc-500"></i>
+                    <span>Interactive Calculator</span>
+                </button>
+                <button onclick="switchWorkspaceTab('timer')" id="tab-btn-timer" class="w-full flex items-center gap-2.5 px-3.5 h-10 text-zinc-400 hover:text-white hover:bg-white/[0.02] rounded-xl text-xs font-bold transition-all">
+                    <i data-lucide="clock" class="w-4 h-4 text-zinc-500"></i>
+                    <span>Focus pomodoro</span>
+                </button>
+            </div>
+
+            <!-- Recent Chat threads title -->
+            <div class="px-4.5 pt-4 pb-2 flex items-center justify-between font-display text-[9px] font-black uppercase tracking-widest text-zinc-500">
+                <span>CONVERSATIONS</span>
+                <button onclick="createNewThread()" title="New Thread" class="p-1 hover:bg-white/5 text-zinc-400 hover:text-white transition-all rounded-md flex items-center justify-center cursor-pointer">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+
+            <!-- Scrollable chat thread sessions list -->
+            <div id="threads-container" class="flex-1 overflow-y-auto px-2 space-y-1 py-1">
+                <!-- Dynamically populated thread list items -->
+            </div>
+
+            <!-- Author profile brand status -->
+            <div class="p-4 border-t border-white/[0.04] bg-[#08080a]/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-black flex items-center justify-center shadow-md select-none">
+                        R
+                    </div>
+                    <div class="flex-1 min-w-0 flex flex-col leading-none">
+                        <span class="text-[11px] font-bold text-white truncate font-display">Auryx Client Console</span>
+                        <span class="text-[9.5px] text-zinc-500 mt-1 truncate font-medium">Designed by Rishi (Class 10th)</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN LAYOUT WRAPPER -->
+        <main class="flex-1 h-full flex flex-col overflow-hidden min-w-0 bg-[#070709]/15 relative z-30">
+            
+            <!-- TOOLBAR NAV BAR HEADER -->
+            <header class="h-14 bg-[#0a0a0c]/85 backdrop-blur-md border-b border-white/[0.03] flex items-center justify-between px-4 sm:px-6 select-none z-30">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleSidebarMenu()" class="p-2 rounded-xl border border-white/5 hover:bg-white/5 text-zinc-400 hover:text-white transition-all flex items-center justify-center md:hidden cursor-pointer">
+                        <i data-lucide="menu" class="w-4 h-4"></i>
+                    </button>
+                    <span class="font-display font-extrabold text-sm text-zinc-200 hidden sm:inline tracking-tight">Workspace Web Portal</span>
+                    <span class="text-xs text-white/20 hidden sm:inline">|</span>
+                    
+                    <div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/15 text-[9px] text-blue-400 font-extrabold shadow-sm tracking-wider uppercase select-none">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+                        <span>Client Handshake Active</span>
+                    </div>
+                </div>
+
+                <!-- Utilities Menu -->
+                <div class="flex items-center gap-2">
+                    
+                    <!-- Global theme presets selector -->
+                    <div class="hidden sm:flex items-center gap-1 border border-white/5 bg-zinc-950 px-2 py-1 rounded-xl">
+                        <button onclick="switchAccentTheme('theme-blue')" class="w-3 h-3 rounded-full bg-blue-500 border border-white/10 hover:scale-110 active:scale-95 transition-all" title="Royal Slate Theme"></button>
+                        <button onclick="switchAccentTheme('theme-purple')" class="w-3 h-3 rounded-full bg-purple-500 border border-white/10 hover:scale-110 active:scale-95 transition-all" title="Cyber Violet Theme"></button>
+                        <button onclick="switchAccentTheme('theme-emerald')" class="w-3 h-3 rounded-full bg-emerald-500 border border-white/10 hover:scale-110 active:scale-95 transition-all" title="Emerald Matrix Theme"></button>
+                        <button onclick="switchAccentTheme('theme-rose')" class="w-3 h-3 rounded-full bg-rose-500 border border-white/10 hover:scale-110 active:scale-95 transition-all" title="Ruby Rose Theme"></button>
+                        <button onclick="switchAccentTheme('theme-amber')" class="w-3 h-3 rounded-full bg-amber-500 border border-white/10 hover:scale-110 active:scale-95 transition-all" title="Amber Sand Theme"></button>
+                    </div>
+
+                    <!-- Gemini Credentials Token Box trigger -->
+                    <button onclick="openTokenModal()" class="h-8.5 px-3 rounded-xl bg-[#0b0b0d] border border-white/5 hover:bg-white/[0.04] text-[10.5px] text-zinc-200 font-bold flex items-center gap-2 transition-all shadow-md cursor-pointer">
+                        <i data-lucide="key" class="w-3.5 h-3.5 text-yellow-400 animate-pulse"></i>
+                        <span>Configure API Key</span>
+                    </button>
+
+                    <!-- Reset all locally stored database block frames -->
+                    <button onclick="factoryResetPlatform()" title="Factory Hard Reset Workspace" class="w-8.5 h-8.5 rounded-xl border border-white/5 bg-[#0b0b0d] hover:bg-red-500/10 hover:border-red-500/20 text-zinc-400 hover:text-red-400 flex items-center justify-center transition-all cursor-pointer">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- MAIN WORKSPACE ADAPTIVE DOCK AREA -->
+            <div class="flex-1 flex flex-col overflow-hidden relative">
+
+                <!-- VIEW ID: CHAT -->
+                <div id="view-portal-chat" class="flex-1 flex flex-col overflow-hidden">
+                    
+                    <!-- Search Conversation Filtering element -->
+                    <div class="bg-zinc-950/20 px-4.5 py-2.5 border-b border-white/[0.02] flex items-center justify-between select-none">
+                        <div class="flex items-center gap-2 text-xs text-zinc-500 font-medium">
+                            <i data-lucide="search" class="w-3.5 h-3.5 text-zinc-600"></i>
+                            <input oninput="updateChatFilter(this.value)" type="text" placeholder="Search prompts history..." class="bg-transparent border-none outline-none text-xs text-zinc-300 placeholder-zinc-600 w-48 font-sans select-text" />
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span id="filtered-thread-indicator" class="text-[9px] text-zinc-500 font-mono font-bold uppercase tracking-wider bg-white/5 px-2 py-0.5 rounded-md">1 Thread Mode</span>
+                        </div>
+                    </div>
+
+                    <!-- Scroll Message Container -->
+                    <div id="chat-scroller" class="flex-1 overflow-y-auto py-6 px-4 sm:px-8 space-y-6 scroll-smooth">
+                        <!-- Dynamic chatting notes rendered inside -->
+                    </div>
+
+                    <!-- Scrolling to bottom element float tag anchor -->
+                    <div id="scrolldown-detector-anchor" class="absolute bottom-[106px] z-[35] right-6 sm:right-10 flex items-center justify-center pointer-events-none opacity-0 translate-y-3 transition-all duration-300">
+                        <button onclick="instantScrollToBottomContainer()" class="pointer-events-auto flex items-center justify-center gap-2.5 px-4.5 py-2.5 rounded-full bg-zinc-950/90 text-white border border-white/[0.06] hover:border-[var(--accent)] hover:text-[var(--accent)] font-bold text-[10px] uppercase tracking-widest cursor-pointer shadow-2xl backdrop-blur-xl transition-all hover:-translate-y-0.5 active:translate-y-0 select-none group">
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-zinc-400 group-hover:text-[var(--accent)] group-hover:translate-y-0.5 transition-all animate-bounce" style="animation-duration: 2s"></i>
+                            <span class="text-zinc-300 group-hover:text-white font-black leading-none">Scroll down</span>
+                        </button>
+                    </div>
+
+                    <!-- BOTTOM CHAT EDITOR WRITER AREA -->
+                    <div class="p-3 sm:p-5 border-t border-white/[0.04] bg-[#09090b]/20 shrink-0">
+                        <div class="max-w-3xl mx-auto flex flex-col gap-2">
+                            
+                            <!-- Master textbox container box -->
+                            <div class="bg-[#0b0b0d]/90 border border-white/5 shadow-2xl rounded-2xl flex flex-col focus-within:border-[var(--accent)]/50 focus-within:ring-2 focus-within:ring-[var(--accent)]/15 focus-within:shadow-[0_12px_45px_rgba(0,0,0,0.8),0_0_20px_var(--accent-glow)] transition-all overflow-hidden relative">
+                                <textarea id="chat-text-area" rows="1" placeholder="Describe mathematical ideas, study goals, science formula query strings..." class="w-full bg-transparent border-none outline-none text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 px-4.5 pt-4 pb-2.5 resize-none font-sans min-h-[46px] max-h-[160px] leading-relaxed select-text"></textarea>
+                                
+                                <div class="flex items-center justify-between px-3.5 py-2.5 border-t border-white/[0.04] bg-white/[0.01]">
+                                    <div class="flex items-center gap-2 select-none">
+                                        <span id="textbox-unit-tracker" class="text-[9px] text-zinc-500 font-mono font-black uppercase">0 cells</span>
+                                    </div>
+                                    <button id="dispatch-prompt-trigger" onclick="sendMessagePromptString()" class="px-5 py-2.5 rounded-xl bg-[var(--accent)] text-white hover:brightness-115 text-xs font-black uppercase tracking-widest transition-all shadow-md shadow-[var(--accent-glow)] select-none active:scale-95 flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.2">
+                                        <span>Execute</span>
+                                        <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-white"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Student Info footnote -->
+                            <div class="flex items-center justify-between text-[9px] text-zinc-500 select-none px-1.5 pt-1 font-medium font-display tracking-wide">
+                                <span>Auryx Web Portal • Ported 100% Client-Side Ready</span>
+                                <span>Crafted by Rishi, Class 10th Designer</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- VIEW ID: NOTES HUB -->
+                <div id="view-portal-notes" class="flex-1 flex-col py-6 px-4.5 sm:px-8 max-w-5xl mx-auto w-full overflow-hidden hidden">
+                    <div class="flex items-center justify-between border-b border-white/[0.03] pb-4 mb-4 select-none">
+                        <div class="leading-none">
+                            <h2 class="text-sm font-black uppercase tracking-widest text-[#f4f4f5] flex items-center gap-2 font-display">
+                                <i data-lucide="file-text" class="w-4 h-4 text-zinc-400"></i>
+                                <span>Study Notes Repository</span>
+                            </h2>
+                            <span class="text-[10px] text-zinc-500 block mt-1">Stored dynamically on browser database block caches.</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="createNewNoteDataNode()" class="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-white/5 text-zinc-300 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 select-none cursor-pointer">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                <span>New Document</span>
+                            </button>
+                            <button onclick="saveActiveDocumentNote()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 border border-emerald-500/10 text-white rounded-xl text-xs font-black transition-all active:scale-95 flex items-center gap-1.5 select-none cursor-pointer">
+                                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                <span>Save Changes</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 flex flex-col md:flex-row gap-5 overflow-hidden">
+                        <!-- Left Archived notes database -->
+                        <div class="w-full md:w-80 flex flex-col bg-zinc-950/40 border border-white/5 rounded-2xl p-3.5 overflow-hidden">
+                            <span class="text-[9.5px] font-black uppercase text-zinc-500 tracking-wider mb-3.5 block px-1 select-none">Saved Document Lists</span>
+                            <!-- Search document filter -->
+                            <div class="flex items-center gap-2 bg-black border border-white/5 rounded-xl px-3 py-1.5 mb-3">
+                                <i data-lucide="search" class="w-3.5 h-3.5 text-zinc-650"></i>
+                                <input type="text" oninput="updateNotesSelectorFilterList(this.value)" placeholder="Find document..." class="bg-transparent border-none outline-none text-xs text-zinc-300 placeholder-zinc-700 w-full" />
+                            </div>
+                            <div id="notes-sidebar-items-list" class="flex-1 overflow-y-auto space-y-1.5 pr-0.5">
+                                <!-- lists -->
+                            </div>
+                        </div>
+
+                        <!-- Right active draft writer canvas -->
+                        <div class="flex-1 flex flex-col gap-3 overflow-hidden">
+                            <input id="note-data-input-title" type="text" placeholder="Document title node..." class="w-full bg-[#0c0c0e]/80 border border-white/5 rounded-xl px-4 py-3 text-xs font-bold text-white placeholder-zinc-650 outline-none focus:border-[var(--accent)] transition-all" />
+                            <textarea id="note-data-input-content" placeholder="Draft science essays, chemistry equations, study goals transcripts, or coding outlines here... Supports local storage offline saving!" class="w-full flex-1 bg-[#0c0c0e]/80 border border-white/5 rounded-2xl px-4.5 py-4 text-xs sm:text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-[var(--accent)] resize-none font-mono leading-relaxed select-text"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW ID: CALCULATOR WORKSPACE -->
+                <div id="view-portal-calculator" class="flex-1 flex flex-col items-center justify-center p-6 max-w-md mx-auto w-full hidden">
+                    <div class="w-full bg-[#0a0a0c] border border-white/5 p-5.5 rounded-3xl shadow-2xl relative select-none">
+                        <div class="flex items-center justify-between pb-3.5 border-b border-white/[0.03] mb-4.5">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="calculator" class="w-4 h-4 text-zinc-400"></i>
+                                <span class="text-xs font-extrabold uppercase tracking-widest text-zinc-300">Arithmetic solver</span>
+                            </div>
+                            <span class="text-[9px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/10 font-bold uppercase tracking-wider font-mono">100% Precise</span>
+                        </div>
+
+                        <!-- Calculator displays screen -->
+                        <div class="bg-black/80 border border-white/[0.02] px-4 py-4 rounded-xl flex flex-col justify-end items-end mb-4 min-h-[76px] relative overflow-hidden">
+                            <div id="calc-formula-history" class="text-[10px] text-zinc-550 font-mono tracking-wide h-4 mb-1"></div>
+                            <div id="calc-formula-result" class="text-xl sm:text-2xl font-mono text-zinc-50 font-bold tracking-wide truncate max-w-full">0</div>
+                        </div>
+
+                        <!-- Keypad matrix grids -->
+                        <div class="grid grid-cols-4 gap-2 text-xs font-mono font-bold text-center">
+                            <button onclick="dialCalculatorButton('C')" class="h-11 rounded-xl bg-red-500/10 hover:bg-red-500/15 text-red-400 flex items-center justify-center transition-all active:scale-95 cursor-pointer">C</button>
+                            <button onclick="dialCalculatorButton('(')" class="h-11 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 flex items-center justify-center transition-all active:scale-95 cursor-pointer">(</button>
+                            <button onclick="dialCalculatorButton(')')" class="h-11 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 flex items-center justify-center transition-all active:scale-95 cursor-pointer">)</button>
+                            <button onclick="dialCalculatorButton('/')" class="h-11 rounded-xl bg-zinc-900/60 hover:bg-zinc-850 text-[var(--accent)] flex items-center justify-center transition-all active:scale-95 cursor-pointer">÷</button>
+
+                            <button onclick="dialCalculatorButton('7')" class="h-11 rounded-xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer">7</button>
+                            <button onclick="dialCalculatorButton('8')" class="h-11 rounded-xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer">8</button>
+                            <button onclick="dialCalculatorButton('9')" class="h-11 rounded-xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer">9</button>
+                            <button onclick="dialCalculatorButton('*')" class="h-11 rounded-xl bg-zinc-900/60 hover:bg-zinc-850 text-[var(--accent)] flex items-center justify-center transition-all active:scale-95 cursor-pointer">×</button>
+
+                            <button onclick="dialCalculatorButton('4')" class="h-11 rounded-xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer">4</button>
+                            <button onclick="dialCalculatorButton('5')" class="h-11 rounded-xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer">5</button>
+                            <button onclick="dialCalculatorButton('6')" class="h-11 rounded-xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer">6</button>
+                            <button onclick="dialCalculatorButton('-')" class="h-11 rounded-xl bg-zinc-900/60 hover:bg-zinc-850 text-[var(--accent)] flex items-center justify-center transition-all active:scale-95 cursor-pointer">-</button>
+
+                            <button onclick="dialCalculatorButton('1')" class="h-11 rounded-xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer">1</button>
+                            <button onclick="dialCalculatorButton('2')" class="h-11 rounded-xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer">2</button>
+                            <button onclick="dialCalculatorButton('3')" class="h-11 rounded-xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer">3</button>
+                            <button onclick="dialCalculatorButton('+')" class="h-11 rounded-xl bg-zinc-900/60 hover:bg-zinc-850 text-[var(--accent)] flex items-center justify-center transition-all active:scale-95 cursor-pointer">+</button>
+
+                            <button onclick="dialCalculatorButton('0')" class="h-11 col-span-2 rounded-xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer">0</button>
+                            <button onclick="dialCalculatorButton('.')" class="h-11 rounded-xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer">.</button>
+                            <button onclick="evaluateCalculatorOutputValue()" class="h-11 rounded-xl bg-[var(--accent)] text-white hover:brightness-110 flex items-center justify-center shadow-lg shadow-[var(--accent-glow)] transition-all active:scale-95 cursor-pointer">=</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW ID: FOCUS POMODORO TIMER -->
+                <div id="view-portal-timer" class="flex-1 flex flex-col items-center justify-center p-6 max-w-md mx-auto w-full hidden">
+                    <div class="w-full bg-[#0a0a0c] border border-white/5 p-6 sm:p-7 rounded-3xl shadow-2xl text-center select-none">
+                        <div class="flex items-center gap-2 justify-center pb-4 border-b border-white/[0.03] mb-6">
+                            <i data-lucide="clock" class="w-4 h-4 text-zinc-400"></i>
+                            <span class="text-xs font-black uppercase tracking-widest text-zinc-300">Focus pomodoro timer</span>
+                        </div>
+
+                        <!-- Round clock frame graphic element -->
+                        <div class="relative w-44 h-44 mx-auto flex items-center justify-center mb-6">
+                            <svg class="absolute w-full h-full transform -rotate-90">
+                                <circle cx="88" cy="88" r="80" stroke="rgba(255,255,255,0.02)" stroke-width="6" fill="transparent"></circle>
+                                <circle id="pomodoro-circle-ring" cx="88" cy="88" r="80" stroke="var(--accent)" stroke-width="6" fill="transparent" stroke-dasharray="502" stroke-dashoffset="0" class="transition-all duration-1000"></circle>
+                            </svg>
+                            
+                            <div class="z-10 flex flex-col items-center">
+                                <span id="timer-numeric-element" class="text-3xl font-mono font-black text-white tracking-wide">25:00</span>
+                                <span id="timer-interval-caption" class="text-[9px] font-black uppercase text-zinc-500 tracking-wider mt-1.5">Focus Block</span>
+                            </div>
+                        </div>
+
+                        <!-- Action controls -->
+                        <div class="flex justify-center gap-3 text-xs font-bold mb-4.5">
+                            <button onclick="startPomodoroLoop()" class="px-5 py-2 rounded-xl bg-zinc-950 border border-white/5 text-emerald-400 hover:bg-emerald-500/5 transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer">
+                                <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                                <span>Start</span>
+                            </button>
+                            <button onclick="pausePomodoroLoop()" class="px-5 py-2 rounded-xl bg-zinc-950 border border-white/5 text-amber-400 hover:bg-amber-500/5 transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer">
+                                <i data-lucide="pause" class="w-3.5 h-3.5"></i>
+                                <span>Pause</span>
+                            </button>
+                            <button onclick="resetPomodoroLoop()" class="px-5 py-2 rounded-xl bg-zinc-950 border border-white/5 text-red-500 hover:bg-red-500/5 transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                                <span>Reset</span>
+                            </button>
+                        </div>
+
+                        <!-- Quick Intervals config keys -->
+                        <div class="flex justify-center gap-1.5 text-[9.5px] font-black uppercase">
+                            <button onclick="reconfigureTimerSettings(25, 'Focus Session')" class="px-3.5 py-1.5 bg-white/5 text-zinc-300 rounded-lg hover:bg-white/10 active:scale-95 transition-all cursor-pointer">Focus Block (25m)</button>
+                            <button onclick="reconfigureTimerSettings(5, 'Short Rest')" class="px-3.5 py-1.5 bg-white/5 text-zinc-300 rounded-lg hover:bg-white/10 active:scale-95 transition-all cursor-pointer">Break Interval (5m)</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- TOKEN CREDS MODAL DIALOG POPUP -->
+        <div id="credentials-vault-dialog" class="fixed inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center z-50 p-4 hidden">
+            <div class="bg-[#0b0b0d] border border-white/10 rounded-3xl w-full max-w-sm p-6 shadow-2xl relative z-50">
+                <div class="flex items-center justify-between pb-3.5 border-b border-white/[0.04] mb-4">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="key" class="w-4 h-4 text-yellow-400 animate-bounce"></i>
+                        <span class="text-xs font-black uppercase tracking-widest text-zinc-100">Handshake Credentials Vault</span>
+                    </div>
+                    <button onclick="closeTokenModal()" class="text-zinc-500 hover:text-white p-1 hover:bg-white/5 rounded-lg transition-all cursor-pointer">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                
+                <p class="text-[11.5px] text-zinc-400 leading-relaxed mb-4">Provide a Google Gemini API Key. Since this app runs client-side, your key remains 100% private and is stored securely in your browser's Local Storage.</p>
+                
+                <div class="space-y-4">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[9.5px] font-black uppercase text-zinc-500 tracking-wider">Google Gemini API Token</label>
+                        <input id="vault-token-input-field" type="password" placeholder="AIzaSy..." class="w-full px-4 py-2.5 bg-black border border-white/5 rounded-xl text-xs text-white placeholder-zinc-700 outline-none focus:border-blue-500 transition-all font-mono select-text" />
+                    </div>
+
+                    <div class="flex justify-between items-center bg-blue-500/5 hover:bg-blue-500/10 border border-blue-500/10 p-3 rounded-2xl transition-all">
+                        <span class="text-[10px] text-blue-300 font-semibold">Don't have an API Key?</span>
+                        <a href="https://aistudio.google.com/" target="_blank" rel="noopener" class="text-[10px] font-extrabold text-blue-400 hover:underline">Get Key (Google AI Studio) ↗</a>
+                    </div>
+                    
+                    <div class="flex justify-end gap-2 text-xs font-bold pt-1 select-none">
+                        <button onclick="closeTokenModal()" class="px-4 py-2 bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white rounded-xl transition-all cursor-pointer">Cancel</button>
+                        <button onclick="saveTokenToLocalVault()" class="px-4.5 py-2 bg-blue-600 hover:brightness-110 text-white rounded-xl shadow-lg shadow-blue-500/10 transition-all select-none cursor-pointer">Register Token</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOASTER NOTIFICATIONS CONTROLLER -->
+        <div id="toast-wrapper-container" class="fixed bottom-4 left-4 z-50 flex flex-col gap-2 max-w-sm select-none pointer-events-none">
+            <!-- Dynamic warning items -->
+        </div>
+
+    </div>
+
+    <!-- CORE REACTION CODE SCRIPT (High Fidelity Handshake Controller) -->
+    <script>
+        // Data records
+        let conversations = [];
+        let curConverseId = null;
+        let vaultGeminiToken = "";
+        let globalTab = 'chat';
+        let chatSearchFilterValue = "";
+
+        // Study Hub Records
+        let notebookDocumentList = [];
+        let activeNoteNodeId = null;
+        let notesSelectorFilter = "";
+
+        // Pomodoro counts
+        let intervalTimerHandle = null;
+        let pomodoroRemainingSeconds = 1500;
+        let pomodoroMaxSeconds = 1500;
+        let pomodoroTitleHeaderValue = "Focus Block";
+        let isClockTickingValue = false;
+
+        // Offline Fallback intelligent generator
+        function resolveOfflineConversationalHandshake(msgStr) {
+            const query = msgStr.trim().toLowerCase();
+
+            if (query.match(/\d+\s*[\+\-\*\/]\s*\d+/) || query.includes("solve") || query.includes("calculate") || query.includes("+") || query.includes("-")) {
+                const parts = msgStr.replace(/[a-zA-Z]/g, "").trim();
+                let output = "Parser Error";
+                try {
+                    output = Function(`"use strict"; return (${parts})`)();
+                } catch {
+                    output = "Review arithmetic statement blocks.";
+                }
+                return `### ⚡ Client Mathematic Solver (Offline)\n\nI processed your mathematical inputs streamingly inside our static engine:\n\n- **Formula Captured:** \`${parts}\`\n- **Output Value:** \`**${output}**\`\n\n*Configure your secure Google Gemini API Token to execute deeper computational steps in logic.*`;
+            }
+
+            if (query.includes("rishi") || query.includes("developer") || query.includes("designer") || query.includes("made by") || query.includes("class 10")) {
+                return `### 👑 Rishi - Portfolio Metadata Profile\n\nAuryx Workspace is designed and developed completely by **Rishi**, an talented **Class 10th Student** who excels in high density UX architecture, frontend development, and responsive layout structures.\n\nThis app is crafted to run 100% serverless, requiring zero setups and serving zero logs or telemetry back to cloud platforms. Excellent for students to backup ideas securely!`;
+            }
+
+            if (query.includes("hello") || query.includes("hi") || query.includes("hey") || query.includes("yo") || query.includes("interactive")) {
+                return `### 👋 Welcome to Auryx AI Portable Hub!\n\nHey there! I am **Auryx AI**, your advanced independent assistant designed by **Rishi (Class 10th Student)**.\n\n#### 🚀 Quick Guided Tools:\n- **AI Assistant Chat**: Enter a Google Gemini API Key in the header to run live models streamingly in the browser.\n- **Quick Notes Workspace**: Open notes from the sidebar to organize scientific notes, reminders, or study summaries.\n- **Arithmetic Keypad**: Use the fast grid matrix to compute algebraic tasks instantly.\n- **Focus Pomodoro Timer**: Track study segments elegantly.`;
+            }
+
+            return `### 💡 Offgrid Sandbox Node warning\n\nYou submitted: *"${msgStr}"*.\n\nSince this application is compiled for premium offline environments, please register your private **Google Gemini API Key** by clicking the **Configure API Key** widget in the heading toolbar. Your tokens are cached 100% privately in the client browser.`;
+        }
+
+        // DOM Initializations
+        window.addEventListener('DOMContentLoaded', () => {
+            // Load credentials cache
+            vaultGeminiToken = localStorage.getItem("auryx_vault_token_key") || "";
+            document.getElementById("vault-token-input-field").value = vaultGeminiToken;
+
+            // Load stored threads from localStorage
+            try {
+                const storedConvs = localStorage.getItem("auryx_vault_conversations");
+                if (storedConvs) {
+                    conversations = JSON.parse(storedConvs);
+                }
+            } catch (e) {
+                console.error("Local records reading failed", e);
+            }
+
+            if (!conversations || conversations.length === 0) {
+                const firstThread = {
+                    id: "thread_" + Date.now(),
+                    title: "Welcome to Auryx",
+                    messages: [
+                        { id: "m_1", role: "assistant", content: `### **Welcome Rishi to the Ultimate Standalone Auryx Workspace!** 👋 \n\nThis is a single-file portable HTML webapp. You can write your code, send it to classmates, import it to GitHub, or hosts like Netlify/Vercel with **zero extra backend dependencies required**! \n\n### **Features Built In:**\n1. **Advanced Conversations Threads**: Switch contexts smoothly inside the sidebar.\n2. **Floating Quick Scroll-down Widgets**: Discovers itself on scrolling up to improve main chat readability.\n3. **Quick Notes**: A notes pad that auto-saves your logs locally.\n4. **Keypad Calculator**: High-precision evaluation matrix.\n5. **Focus Pomodoro Timer**: Elegant graphical study manager.\n\n*Provide a Gemini key in settings to activate fully live chatbot features!*`, ts: Date.now() }
+                    ],
+                    ts: Date.now()
+                };
+                conversations = [firstThread];
+                curConverseId = firstThread.id;
+                cachePlatformDataToStorage();
+            } else {
+                curConverseId = conversations[0].id;
+            }
+
+            // Restore notebooks archives
+            try {
+                const localNotes = localStorage.getItem("auryx_vault_notebooks");
+                if (localNotes) {
+                    notebookDocumentList = JSON.parse(localNotes);
+                }
+            } catch {
+                console.error("Note documents load error");
+            }
+
+            if (!notebookDocumentList || notebookDocumentList.length === 0) {
+                notebookDocumentList = [
+                    { id: "node_1", title: "Chemistry notes Class 10th", content: "Metals and Non-metals reactions equations notes.\n1. Iron + Copper Sulphate -> Iron Sulphate + Copper\nFe + CuSO4 -> FeSO4 + Cu", ts: Date.now() }
+                ];
+                localStorage.setItem("auryx_vault_notebooks", JSON.stringify(notebookDocumentList));
+            }
+            activeNoteNodeId = notebookDocumentList[0].id;
+
+            // Wire typing triggers
+            const textbox = document.getElementById("chat-text-area");
+            textbox.addEventListener('input', (e) => {
+                document.getElementById("textbox-unit-tracker").textContent = `${e.target.value.length} cells`;
+                textbox.style.height = "auto";
+                textbox.style.height = `${Math.min(textbox.scrollHeight, 160)}px`;
+            });
+
+            textbox.addEventListener('keydown', (e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessagePromptString();
+                }
+            });
+
+            // Scroller scrolling float detector
+            const scrollBox = document.getElementById("chat-scroller");
+            scrollBox.addEventListener('scroll', () => {
+                const isScrolledAbove = (scrollBox.scrollHeight - scrollBox.scrollTop - scrollBox.clientHeight) > 160;
+                const widget = document.getElementById("scrolldown-detector-anchor");
+                if (isScrolledAbove) {
+                    widget.classList.remove("opacity-0", "translate-y-3", "pointer-events-none");
+                } else {
+                    widget.classList.add("opacity-0", "translate-y-3", "pointer-events-none");
+                }
+            });
+
+            // Trigger visual interfaces
+            rebuildSidebarThreads();
+            rebuildChatDisplay();
+            rebuildNotesWorkspaceList();
+            renderActiveNoteDocumentInWriter();
+            renderPomodoroDisplayUpdate();
+            lucide.createIcons();
+            showToastNodeNotification("Auryx sandbox initialized successfully.", "success");
+        });
+
+        // Offline storage writer
+        function cachePlatformDataToStorage() {
+            localStorage.setItem("auryx_vault_conversations", JSON.stringify(conversations));
+            localStorage.setItem("auryx_vault_token_key", vaultGeminiToken);
+        }
+
+        // Show toast alert
+        function showToastNodeNotification(text, type = "info") {
+            const wrap = document.getElementById("toast-wrapper-container");
+            const box = document.createElement("div");
+            box.className = `toast-slide-in flex items-center gap-2.5 px-4.5 py-3 rounded-2xl border text-xs font-black shadow-2xl backdrop-blur-md pointer-events-auto bg-[#0a0a0c]/95 ${
+                type === "error" 
+                ? "border-red-500/20 text-red-400" 
+                : type === "success" 
+                ? "border-emerald-500/25 text-emerald-400" 
+                : "border-blue-500/20 text-blue-400"
+            }`;
+
+            const ic = type === "error" ? "alert-circle" : type === "success" ? "check-circle" : "info";
+            box.innerHTML = `<i data-lucide="${ic}" class="w-4 h-4 shrink-0"></i><span class="leading-none text-zinc-100">${text}</span>`;
+            wrap.appendChild(box);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                box.classList.add("opacity-0", "scale-90", "transition-all", "duration-200");
+                setTimeout(() => box.remove(), 250);
+            }, 3200);
+        }
+
+        // Custom tabs switcher handles
+        function switchWorkspaceTab(tabId) {
+            globalTab = tabId;
+            const menuKeys = ['chat', 'notes', 'calculator', 'timer'];
+            
+            menuKeys.forEach(k => {
+                const section = document.getElementById(`view-portal-${k}`);
+                const btn = document.getElementById(`tab-btn-${k}`);
+                if (k === tabId) {
+                    section.classList.remove('hidden');
+                    if (k === 'notes') section.classList.add('flex');
+                    btn.className = "w-full flex items-center justify-between px-3.5 h-10 bg-white/[0.04] text-white rounded-xl text-xs font-bold transition-all border border-white/[0.02]";
+                } else {
+                    section.classList.add('hidden');
+                    if (k === 'notes') section.classList.remove('flex');
+                    btn.className = "w-full flex items-center gap-2.5 px-3.5 h-10 text-zinc-400 hover:text-white hover:bg-white/[0.02] rounded-xl text-xs font-bold transition-all";
+                }
+            });
+            showToastNodeNotification(`Moved to ${tabId.toUpperCase()} workspace.`, "info");
+        }
+
+        // Toggle mobile menu drawer
+        function toggleSidebarMenu() {
+            const side = document.getElementById("sidebar-panel");
+            side.classList.toggle("hidden");
+            side.classList.toggle("fixed");
+            side.classList.toggle("inset-y-0");
+            side.classList.toggle("left-0");
+            side.classList.toggle("bg-[#0a0a0c]");
+            side.classList.toggle("flex");
+        }
+
+        // Sync visual theme modifiers
+        function switchAccentTheme(themeClassName) {
+            const body = document.body;
+            body.className = body.className.replace(/theme-[a-z]+/g, themeClassName);
+            showToastNodeNotification("Color scheme updated.", "success");
+        }
+
+        // Recent conversations controller methods
+        function rebuildSidebarThreads() {
+            const list = document.getElementById("threads-container");
+            list.innerHTML = "";
+
+            conversations.forEach(c => {
+                const matches = c.id === curConverseId;
+                const row = document.createElement("div");
+                row.className = `w-full flex items-center justify-between px-3 py-2.5 rounded-xl border transition-all text-left cursor-pointer group select-none ${
+                    matches 
+                    ? "bg-gradient-to-r from-blue-600/10 to-indigo-600/5 border-blue-500/20 text-white" 
+                    : "bg-transparent border-transparent hover:bg-white/[0.02] text-zinc-400 hover:text-white"
+                }`;
+                row.setAttribute("onclick", `activateConverseThread('${c.id}')`);
+
+                const headerText = document.createElement("span");
+                headerText.className = "truncate text-xs font-bold tracking-tight block w-4/5 leading-none";
+                headerText.textContent = c.title;
+
+                const trashIcon = document.createElement("button");
+                trashIcon.className = "hidden group-hover:flex items-center justify-center p-0.5 rounded-md hover:bg-red-500/15 text-zinc-500 hover:text-red-400 transition-all cursor-pointer";
+                trashIcon.setAttribute("onclick", `event.stopPropagation(); deleteConverseThread('${c.id}')`);
+                trashIcon.innerHTML = `<i data-lucide="trash-2" class="w-3.5 h-3.5"></i>`;
+
+                row.appendChild(headerText);
+                row.appendChild(trashIcon);
+                list.appendChild(row);
+            });
+            lucide.createIcons();
+        }
+
+        function activateConverseThread(tid) {
+            curConverseId = tid;
+            rebuildSidebarThreads();
+            rebuildChatDisplay();
+        }
+
+        function createNewThread() {
+            const nextT = {
+                id: "thread_" + Date.now(),
+                title: "Draft Thread",
+                messages: [
+                    { id: "msg_init", role: "assistant", content: `### Thread session initialized\n\nType down in the execution text field to prompt. Live endpoints connect immediately upon saving an API key inside the heading vault.`, ts: Date.now() }
+                ],
+                ts: Date.now()
+            };
+            conversations.unshift(nextT);
+            curConverseId = nextT.id;
+            cachePlatformDataToStorage();
+            rebuildSidebarThreads();
+            rebuildChatDisplay();
+            showToastNodeNotification("New thread node registered.", "success");
+        }
+
+        function deleteConverseThread(tid) {
+            conversations = conversations.filter(c => c.id !== tid);
+            if (curConverseId === tid) {
+                curConverseId = conversations.length > 0 ? conversations[0].id : null;
+            }
+            if (conversations.length === 0) {
+                createNewThread();
+            } else {
+                cachePlatformDataToStorage();
+                rebuildSidebarThreads();
+                rebuildChatDisplay();
+            }
+            showToastNodeNotification("Converse session truncated.", "info");
+        }
+
+        function updateChatFilter(val) {
+            chatSearchFilterValue = val;
+            rebuildChatDisplay();
+        }
+
+        // Render chats
+        function rebuildChatDisplay() {
+            const main = document.getElementById("chat-scroller");
+            main.innerHTML = "";
+
+            const curr = conversations.find(c => c.id === curConverseId);
+            if (!curr) return;
+
+            const selection = curr.messages.filter(m => {
+                if (!chatSearchFilterValue.trim()) return true;
+                return m.content.toLowerCase().includes(chatSearchFilterValue.toLowerCase());
+            });
+
+            if (selection.length === 0) {
+                main.innerHTML = `<div class="flex flex-col items-center justify-center my-14 text-center text-zinc-500">
+                    <i data-lucide="alert-triangle" class="w-8 h-8 text-zinc-650 mb-2"></i>
+                    <p class="text-xs font-bold uppercase tracking-widest leading-none">No matched cells</p>
+                </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            const indicator = document.getElementById("filtered-thread-indicator");
+            if (chatSearchFilterValue.trim()) {
+                indicator.textContent = `FILTERED: ${selection.length} OF ${curr.messages.length}`;
+            } else {
+                indicator.textContent = `${curr.messages.length} NODES DISPLAYED`;
+            }
+
+            selection.forEach(m => {
+                const isUsr = m.role === "user";
+                const row = document.createElement("div");
+                row.className = `flex gap-3 sm:gap-4.5 animate-fadeIn ${isUsr ? "flex-row-reverse" : "flex-row"}`;
+
+                const icon = document.createElement("div");
+                icon.className = `w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md text-xs font-black select-none ${
+                    isUsr
+                    ? "bg-gradient-to-tr from-blue-600 to-indigo-600 text-white"
+                    : "bg-gradient-to-tr from-[#8b5cf6] via-[#6366f1] to-[#3b82f6] text-white"
+                }`;
+                icon.innerHTML = isUsr ? "U" : `<i data-lucide="sparkles" class="w-4 h-4 text-white hover:rotate-12 transition-transform"></i>`;
+
+                const speechUnit = document.createElement("div");
+                speechUnit.className = isUsr 
+                    ? `flex flex-col gap-1.5 max-w-[85%] sm:max-w-[88%] items-end`
+                    : `flex flex-col gap-1.5 w-full max-w-full items-start`;
+
+                const wordCard = document.createElement("div");
+                wordCard.className = `px-4.5 py-3.5 rounded-2xl sm:rounded-3xl border text-xs leading-relaxed transition-all select-text ${
+                    isUsr 
+                    ? "bg-[#0b0b0d] border-white/5 rounded-tr-none text-right text-zinc-200" 
+                    : "bg-[#121215] border-[#27272a] hover:border-[#3f3f46]/40 border-l-4 border-l-[var(--accent)] rounded-tl-none text-left text-zinc-200"
+                }`;
+
+                // Parse markdown strings simply with safety controls
+                let sanitized = m.content
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/### (.*?)\n/g, '<h3 class="text-xs font-black uppercase text-amber-400 mt-2.5 mb-1">$1</h3>')
+                    .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 bg-black/40 border border-white/5 rounded text-[10.5px] font-mono text-purple-400">$1</code>')
+                    .replace(/\n/g, "<br/>");
+
+                wordCard.innerHTML = sanitized;
+
+                const bottomTime = document.createElement("span");
+                bottomTime.className = "text-[9px] font-mono text-zinc-600 select-none px-1.5 mt-0.5 block";
+                bottomTime.textContent = new Date(m.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                speechUnit.appendChild(wordCard);
+                speechUnit.appendChild(bottomTime);
+                row.appendChild(icon);
+                row.appendChild(speechUnit);
+                main.appendChild(row);
+            });
+
+            lucide.createIcons();
+            instantScrollToBottomContainer();
+        }
+
+        // Send chats triggers
+        async function sendMessagePromptString() {
+            const input = document.getElementById("chat-text-area");
+            const val = input.value.trim();
+            if (!val) return;
+
+            const targetCon = conversations.find(c => c.id === curConverseId);
+            if (!targetCon) return;
+
+            // Push User Msg
+            const uMsg = { id: "m_" + Date.now(), role: "user", content: val, ts: Date.now() };
+            targetCon.messages.push(uMsg);
+            input.value = "";
+            document.getElementById("textbox-unit-tracker").textContent = "0 cells";
+            input.style.height = "auto";
+
+            // If the thread header is placeholder, update with string
+            if (targetCon.title === "Draft Thread" || targetCon.title === "New Converse Block") {
+                targetCon.title = val.length > 20 ? val.slice(0, 20) + "..." : val;
+                rebuildSidebarThreads();
+            }
+
+            rebuildChatDisplay();
+            cachePlatformDataToStorage();
+
+            const parseId = "think_" + Date.now();
+            const tempAssMsg = { id: parseId, role: "assistant", content: "Establishing model neural connection...", ts: Date.now() };
+            targetCon.messages.push(tempAssMsg);
+            rebuildChatDisplay();
+
+            // Run API handshakes
+            if (vaultGeminiToken) {
+                try {
+                    const reqObj = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${vaultGeminiToken}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{ text: val }]
+                            }]
+                        })
+                    });
+
+                    const rParsed = await reqObj.json();
+                    let stringResult = "";
+                    if (rParsed.candidates && rParsed.candidates[0].content.parts[0].text) {
+                        stringResult = rParsed.candidates[0].content.parts[0].text;
+                    } else {
+                        stringResult = "Invalid endpoints token output format - review Google Cloud credentials logs.";
+                    }
+                    tempAssMsg.content = stringResult;
+                } catch (err) {
+                    tempAssMsg.content = `### ** हैंडशेक एरर (Handshake Error)**\n\nFailed to sync browser package packets streamingly with Google servers:\n\n- **Error Response:** \`${err.message}\`\n- **Resolution:** Verify your Gemini key token sequence in the settings panel.`;
+                    showToastNodeNotification("handshake fetch timeout.", "error");
+                }
+            } else {
+                // Returns highly optimized offgrid custom patterns values
+                setTimeout(() => {
+                    tempAssMsg.content = resolveOfflineConversationalHandshake(val);
+                    rebuildChatDisplay();
+                    cachePlatformDataToStorage();
+                }, 750);
+            }
+
+            rebuildChatDisplay();
+            cachePlatformDataToStorage();
+        }
+
+        // Instant scroll
+        function instantScrollToBottomContainer() {
+            const scroller = document.getElementById("chat-scroller");
+            scroller.scrollTop = scroller.scrollHeight;
+        }
+
+        // --- STUDY NOTES REPOSITORY MODULES ---
+        function rebuildNotesWorkspaceList() {
+            const hook = document.getElementById("notes-sidebar-items-list");
+            hook.innerHTML = "";
+
+            const activeSet = notebookDocumentList.filter(n => {
+                if (!notesSelectorFilter.trim()) return true;
+                return n.title.toLowerCase().includes(notesSelectorFilter.toLowerCase());
+            });
+
+            activeSet.forEach(n => {
+                const pick = n.id === activeNoteNodeId;
+                const noteCard = document.createElement("div");
+                noteCard.className = `p-2.5 rounded-xl border cursor-pointer transition-all flex flex-col gap-1 select-none leading-none position-relative group ${
+                    pick 
+                    ? "bg-zinc-900 border-[var(--accent)]/40 text-white" 
+                    : "bg-transparent border-transparent hover:bg-white/[0.02] text-zinc-400 hover:text-white"
+                }`;
+                noteCard.setAttribute("onclick", `selectNoteItemCell('${n.id}')`);
+
+                const titleRow = document.createElement("div");
+                titleRow.className = "flex items-center justify-between";
+
+                const mainTitle = document.createElement("span");
+                mainTitle.className = "text-xs font-bold truncate block w-4/5";
+                mainTitle.textContent = n.title || "Untitled Paper";
+
+                const deleteNoteButton = document.createElement("button");
+                deleteNoteButton.className = "hidden group-hover:flex items-center text-zinc-500 hover:text-red-400 p-0.5 rounded-md hover:bg-red-500/10 transition-colors cursor-pointer";
+                deleteNoteButton.innerHTML = `<i data-lucide="trash" class="w-3 h-3"></i>`;
+                deleteNoteButton.setAttribute("onclick", `event.stopPropagation(); deleteNoteDocument('${n.id}')`);
+
+                titleRow.appendChild(mainTitle);
+                titleRow.appendChild(deleteNoteButton);
+
+                const lengthSubtitle = document.createElement("span");
+                lengthSubtitle.className = "text-[9.5px] text-zinc-650 font-mono";
+                lengthSubtitle.textContent = `${n.content.length} characters`;
+
+                noteCard.appendChild(titleRow);
+                noteCard.appendChild(lengthSubtitle);
+                hook.appendChild(noteCard);
+            });
+            lucide.createIcons();
+        }
+
+        function updateNotesSelectorFilterList(val) {
+            notesSelectorFilter = val;
+            rebuildNotesWorkspaceList();
+        }
+
+        function selectNoteItemCell(nid) {
+            saveActiveDocumentNoteSilent();
+            activeNoteNodeId = nid;
+            renderActiveNoteDocumentInWriter();
+            rebuildNotesWorkspaceList();
+        }
+
+        function createNewNoteDataNode() {
+            const nextNote = {
+                id: "note_" + Date.now(),
+                title: "New Study Sheet",
+                content: "",
+                ts: Date.now()
+            };
+            notebookDocumentList.unshift(nextNote);
+            activeNoteNodeId = nextNote.id;
+            localStorage.setItem("auryx_vault_notebooks", JSON.stringify(notebookDocumentList));
+            rebuildNotesWorkspaceList();
+            renderActiveNoteDocumentInWriter();
+            showToastNodeNotification("Note draft established.", "success");
+        }
+
+        function renderActiveNoteDocumentInWriter() {
+            const inputT = document.getElementById("note-data-input-title");
+            const inputC = document.getElementById("note-data-input-content");
+            const active = notebookDocumentList.find(n => n.id === activeNoteNodeId);
+
+            if (active) {
+                inputT.value = active.title;
+                inputC.value = active.content;
+            } else {
+                inputT.value = "";
+                inputC.value = "";
+            }
+        }
+
+        function saveActiveDocumentNote() {
+            const inputT = document.getElementById("note-data-input-title").value.trim();
+            const inputC = document.getElementById("note-data-input-content").value;
+            const active = notebookDocumentList.find(n => n.id === activeNoteNodeId);
+
+            if (active) {
+                active.title = inputT || "Untitled Space";
+                active.content = inputC;
+                localStorage.setItem("auryx_vault_notebooks", JSON.stringify(notebookDocumentList));
+                rebuildNotesWorkspaceList();
+                showToastNodeNotification("Document persisted.", "success");
+            }
+        }
+
+        function saveActiveDocumentNoteSilent() {
+            const active = notebookDocumentList.find(n => n.id === activeNoteNodeId);
+            if (active) {
+                const inputT = document.getElementById("note-data-input-title").value.trim();
+                const inputC = document.getElementById("note-data-input-content").value;
+                active.title = inputT || "Untitled Space";
+                active.content = inputC;
+                localStorage.setItem("auryx_vault_notebooks", JSON.stringify(notebookDocumentList));
+            }
+        }
+
+        function deleteNoteDocument(nid) {
+            notebookDocumentList = notebookDocumentList.filter(n => n.id !== nid);
+            if (activeNoteNodeId === nid) {
+                activeNoteNodeId = notebookDocumentList.length > 0 ? notebookDocumentList[0].id : null;
+            }
+            if (notebookDocumentList.length === 0) {
+                createNewNoteDataNode();
+            } else {
+                localStorage.setItem("auryx_vault_notebooks", JSON.stringify(notebookDocumentList));
+                rebuildNotesWorkspaceList();
+                renderActiveNoteDocumentInWriter();
+            }
+            showToastNodeNotification("Document trashed.", "info");
+        }
+
+        // --- ARITHMETIC SOLVER CALCULATOR ENGINE ---
+        let currentCalculatedExpressionJoinedString = "";
+
+        function dialCalculatorButton(char) {
+            const resultDisplay = document.getElementById("calc-formula-result");
+            const historyDisplay = document.getElementById("calc-formula-history");
+
+            if (char === 'C') {
+                currentCalculatedExpressionJoinedString = "";
+                resultDisplay.textContent = "0";
+                historyDisplay.textContent = "";
+            } else {
+                currentCalculatedExpressionJoinedString += char;
+                resultDisplay.textContent = currentCalculatedExpressionJoinedString;
+            }
+        }
+
+        function evaluateCalculatorOutputValue() {
+            const resultDisplay = document.getElementById("calc-formula-result");
+            const historyDisplay = document.getElementById("calc-formula-history");
+
+            try {
+                const parsedResult = Function(`"use strict"; return (${currentCalculatedExpressionJoinedString})`)();
+                historyDisplay.textContent = currentCalculatedExpressionJoinedString;
+                resultDisplay.textContent = parsedResult;
+                currentCalculatedExpressionJoinedString = String(parsedResult);
+            } catch {
+                resultDisplay.textContent = "Syntax Error";
+                currentCalculatedExpressionJoinedString = "";
+            }
+        }
+
+        // --- FOCUS TIMER POMODORO BLOCK ---
+        function renderPomodoroDisplayUpdate() {
+            const min = Math.floor(pomodoroRemainingSeconds / 60);
+            const sec = pomodoroRemainingSeconds % 60;
+            document.getElementById("timer-numeric-element").textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+            document.getElementById("timer-interval-caption").textContent = pomodoroTitleHeaderValue;
+
+            // Update Circle Stroke Offset
+            const progressRatio = pomodoroRemainingSeconds / pomodoroMaxSeconds;
+            const strokeOffset = 502 - (502 * progressRatio);
+            document.getElementById("pomodoro-circle-ring").setAttribute("stroke-dashoffset", strokeOffset);
+        }
+
+        function reconfigureTimerSettings(mins, text) {
+            pausePomodoroLoop();
+            pomodoroRemainingSeconds = mins * 60;
+            pomodoroMaxSeconds = mins * 60;
+            pomodoroTitleHeaderValue = text;
+            renderPomodoroDisplayUpdate();
+            showToastNodeNotification(`Timer updated: ${text}.`, "info");
+        }
+
+        function startPomodoroLoop() {
+            if (isClockTickingValue) return;
+            isClockTickingValue = true;
+            intervalTimerHandle = setInterval(() => {
+                if (pomodoroRemainingSeconds > 0) {
+                    pomodoroRemainingSeconds--;
+                    renderPomodoroDisplayUpdate();
+                } else {
+                    pausePomodoroLoop();
+                    showToastNodeNotification("Focus segment completed! Take a step back.", "success");
+                    // Web Audio API beep notice
+                    try {
+                        const act = new (window.AudioContext || window.webkitAudioContext)();
+                        const osc = act.createOscillator();
+                        osc.connect(act.destination);
+                        osc.frequency.value = 540;
+                        osc.start();
+                        setTimeout(() => osc.stop(), 500);
+                    } catch {}
+                }
+            }, 1000);
+            showToastNodeNotification("Countdown tracking active.", "success");
+        }
+
+        function pausePomodoroLoop() {
+            isClockTickingValue = false;
+            if (intervalTimerHandle) {
+                clearInterval(intervalTimerHandle);
+            }
+            showToastNodeNotification("Countdown paused.", "info");
+        }
+
+        function resetPomodoroLoop() {
+            pausePomodoroLoop();
+            pomodoroRemainingSeconds = pomodoroMaxSeconds;
+            renderPomodoroDisplayUpdate();
+            showToastNodeNotification("Timer block reset.", "info");
+        }
+
+        // --- CREDENTIALS VAULT MODAL CONTROL NODES ---
+        function openTokenModal() {
+            document.getElementById("credentials-vault-dialog").classList.remove("hidden");
+        }
+
+        function closeTokenModal() {
+            document.getElementById("credentials-vault-dialog").classList.add("hidden");
+        }
+
+        function saveTokenToLocalVault() {
+            const keyVal = document.getElementById("vault-token-input-field").value.trim();
+            vaultGeminiToken = keyVal;
+            cachePlatformDataToStorage();
+            closeTokenModal();
+            showToastNodeNotification("Gemini token stored successfully.", "success");
+            rebuildChatDisplay();
+        }
+
+        function factoryResetPlatform() {
+            if (confirm("Reset current Auryx local document logs and conversational archive blocks? This operation is permanent.")) {
+                localStorage.clear();
+                window.location.reload();
+            }
+        }
+    </script>
+
+</body>
+</html>

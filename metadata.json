@@ -1,0 +1,6 @@
+{
+  "name": "Auryx AI",
+  "description": "Enterprise-grade multi-provider AI workspace integrated with a productivity suite, notes, timers, alarms, widgets, and advanced analytics.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

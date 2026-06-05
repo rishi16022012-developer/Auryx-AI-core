@@ -1,0 +1,196 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg: #0d0d0e;
+    --sidebar: #09090a;
+    --surface: #151518;
+    --border: #1d1d21;
+    --accent: #10a37f;
+    --accent-rgb: 16, 163, 127;
+    --accent-glow: rgba(16, 163, 127, 0.15);
+    --text: #e3e3e3;
+    --text-dim: #909095;
+    
+    --sh-blue: 217, 91%, 60%;
+    --sh-purple: 271, 91%, 65%;
+    --sh-green: 142, 71%, 45%;
+    --sh-rose: 347, 87%, 60%;
+    --sh-amber: 38, 92%, 50%;
+    --sh-cyan: 188, 86%, 53%;
+    --ac: var(--sh-blue);
+  }
+
+  /* Light Theme Variant - re-engineered as Midnight Graphite to satisfy dark-mode demands */
+  .theme-light {
+    --bg: #121214;
+    --sidebar: #0c0c0e;
+    --surface: #1a1a1e;
+    --border: #252528;
+    --text: #e5e5eb;
+    --text-dim: #9b9ba4;
+    --accent: #10a37f;
+    --accent-rgb: 16, 163, 127;
+    --accent-glow: rgba(16, 163, 127, 0.15);
+  }
+
+  /* Accents modifiers matching settings */
+  .accent-blue {
+    --ac: var(--sh-blue);
+    --accent: #3B82F6;
+    --accent-rgb: 59, 130, 246;
+    --accent-glow: rgba(59, 130, 246, 0.15);
+  }
+  .accent-purple {
+    --ac: var(--sh-purple);
+    --accent: #A855F7;
+    --accent-rgb: 168, 85, 247;
+    --accent-glow: rgba(168, 85, 247, 0.15);
+  }
+  .accent-green {
+    --ac: var(--sh-green);
+    --accent: #22C55E;
+    --accent-rgb: 34, 197, 94;
+    --accent-glow: rgba(34, 197, 94, 0.15);
+  }
+  .accent-rose {
+    --ac: var(--sh-rose);
+    --accent: #F43F5E;
+    --accent-rgb: 244, 63, 94;
+    --accent-glow: rgba(244, 63, 94, 0.15);
+  }
+  .accent-amber {
+    --ac: var(--sh-amber);
+    --accent: #F59E0B;
+    --accent-rgb: 245, 158, 11;
+    --accent-glow: rgba(245, 158, 11, 0.15);
+  }
+  .accent-cyan {
+    --ac: var(--sh-cyan);
+    --accent: #06B6D4;
+    --accent-rgb: 6, 182, 212;
+    --accent-glow: rgba(6, 182, 212, 0.15);
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseHighlight {
+  0%, 100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.animate-fadeUp {
+  animation: fadeUp 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-spinner {
+  animation: spinner 0.7s linear infinite;
+}
+
+/* Code highlight override fits perfectly inside compact interface */
+pre code {
+  color: #c9d1d9;
+  background-color: #0d1117;
+}
+
+.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* Typography elements */
+.prose h1, .prose h2, .prose h3 {
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+.prose h1 { font-size: 1.25rem; }
+.prose h2 { font-size: 1.1rem; }
+.prose h3 { font-size: 1rem; }
+.prose p { margin-bottom: 0.5rem; line-height: 1.5; }
+.prose p:last-child { margin-bottom: 0; }
+.prose ul, .prose ol { padding-left: 1.25rem; margin-bottom: 0.5rem; }
+.prose li { margin-bottom: 0.25rem; }
+.prose pre {
+  margin: 0.75rem 0;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.prose blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 0.75rem;
+  color: var(--text-dim);
+  font-style: italic;
+  margin: 0.75rem 0;
+}
+.prose code {
+  font-family: 'JetBrains Mono', Courier, monospace;
+  font-size: 0.85em;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 0.12rem 0.25rem;
+  border-radius: 4px;
+}
+
